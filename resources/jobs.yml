@@ -1,0 +1,38 @@
+# Biomni jobs: run_trial (A1 agent), data_ingestion (populate UC Volume)
+# Paths are relative to this file (resources/), so ../notebooks/ is bundle root.
+
+resources:
+  jobs:
+    biomni_run_trial:
+      name: "[${bundle.target}] Biomni Run Trial"
+      description: "Run A1 agent trial; set prompt/payload/attachments_path/llm_model via job parameters or widgets."
+      tasks:
+        - task_key: run_trial
+          notebook_task:
+            notebook_path: ../notebooks/run_trial.py
+            base_parameters:
+              prompt: ""
+              payload: "{}"
+              attachments_path: ""
+              llm_model: "databricks-claude-sonnet-4-5"
+          new_cluster:
+            spark_version: "18.0.x-scala2.13"
+            node_type_id: "Standard_D16ds_v5"
+            num_workers: 1
+            # If biomni_agent is not on path, set spark_env_vars.PYTHONPATH to repo root (e.g. /Workspace/Repos/<folder>/biomni-databricks)
+      max_concurrent_runs: 1
+      timeout_seconds: 3600
+
+    biomni_data_ingestion:
+      name: "[${bundle.target}] Biomni Data Ingestion"
+      description: "Download data lake files from S3 to /Volumes/biomni/agent/raw_files."
+      tasks:
+        - task_key: ingest
+          notebook_task:
+            notebook_path: ../notebooks/data_ingestion.py
+          new_cluster:
+            spark_version: "18.0.x-scala2.13"
+            node_type_id: "Standard_D16ds_v5"
+            num_workers: 1
+      max_concurrent_runs: 1
+      timeout_seconds: 7200

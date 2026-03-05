@@ -1,0 +1,30 @@
+# Databricks Asset Bundle – Biomni A1 Agent
+# Deploy: databricks bundle deploy -t dev
+# Run job: databricks bundle run biomni_run_trial -t dev
+
+bundle:
+  name: biomni-databricks
+
+include:
+  - resources/*.yml
+
+variables:
+  catalog:
+    description: Unity Catalog for Biomni (e.g. biomni)
+    default: biomni
+  schema:
+    description: Schema for agent resources
+    default: agent
+  warehouse_id:
+    description: SQL warehouse for jobs (optional)
+    default: ""
+
+targets:
+  dev:
+    default: true
+    workspace:
+      host: https://adb-5818930449284907.7.azuredatabricks.net
+    variables:
+      catalog: biomni
+      schema: agent
+
