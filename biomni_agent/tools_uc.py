@@ -23,15 +23,21 @@ def discover_uc_functions(spark) -> dict[str, list[dict]]:
         keys: name, description, required_parameters, optional_parameters, etc.
     """
     try:
-        df = spark.sql(f"SHOW FUNCTIONS IN {BIOMNI_AGENT_SCHEMA}")
-    except Exception as e:
-        print(f"Warning: Could not SHOW FUNCTIONS IN {BIOMNI_AGENT_SCHEMA}: {e}")
-        return {BIOMNI_AGENT_SCHEMA: []}
+        df = spark.sql(f"SHOW USER FUNCTIONS IN {BIOMNI_AGENT_SCHEMA}")
+    except Exception:
+        try:
+            df = spark.sql(f"SHOW FUNCTIONS IN {BIOMNI_AGENT_SCHEMA}")
+        except Exception as e:
+            print(f"Warning: Could not SHOW FUNCTIONS IN {BIOMNI_AGENT_SCHEMA}: {e}")
+            return {BIOMNI_AGENT_SCHEMA: []}
 
     tools = []
     for row in df.collect():
-        func_name = row.get("function") or row.get("functionName") or str(row[0])
+        rd = row.asDict()
+        func_name = rd.get("function") or rd.get("functionName") or str(row[0])
         if not func_name or "." in func_name.split()[-1]:
+            continue
+        if not func_name.isidentifier():
             continue
         # Describe function for params (optional; some runtimes support DESCRIBE FUNCTION)
         try:
@@ -40,8 +46,9 @@ def discover_uc_functions(spark) -> dict[str, list[dict]]:
             description = ""
             params = []
             for r in desc_rows:
-                key = (r.get("info_name") or r.get("col_name") or str(r[0])).strip()
-                val = (r.get("info_value") or r.get("data_type") or str(r[1])).strip()
+                d = r.asDict()
+                key = (d.get("info_name") or d.get("col_name") or str(r[0])).strip()
+                val = (d.get("info_value") or d.get("data_type") or str(r[1])).strip()
                 if key == "Description" or key == "desc":
                     description = val
                 if key == "Input" or "Parameter" in key:

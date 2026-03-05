@@ -1,18 +1,18 @@
 # Create UC volumes for Biomni: raw_files (data lake), uploads (user attachments).
 # Requires catalog and schema to exist (create manually or via init script).
 
-resources:
-  volumes:
-    raw_files:
-      catalog_name: ${var.catalog}
-      schema_name: ${var.schema}
-      name: raw_files
-      volume_type: MANAGED
-      comment: "Data lake files for Biomni agent (populate via data_ingestion job)."
+# resources:
+#   volumes:
+#     raw_files:
+#       catalog_name: ${var.catalog}
+#       schema_name: ${var.schema}
+#       name: raw_files
+#       volume_type: MANAGED
+#       comment: "Data lake files for Biomni agent (populate via data_ingestion job)."
 
-    uploads:
-      catalog_name: ${var.catalog}
-      schema_name: ${var.schema}
-      name: uploads
-      volume_type: MANAGED
-      comment: "User-uploaded attachments; WebApp writes per-trial paths here (e.g. uploads/<trial_id>/)."
+#     uploads:
+#       catalog_name: ${var.catalog}
+#       schema_name: ${var.schema}
+#       name: uploads
+#       volume_type: MANAGED
+#       comment: "User-uploaded attachments; WebApp writes per-trial paths here (e.g. uploads/<trial_id>/)."

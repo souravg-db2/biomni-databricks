@@ -23,6 +23,26 @@ resources:
       max_concurrent_runs: 1
       timeout_seconds: 3600
 
+    biomni_run_react_agent:
+      name: "[${bundle.target}] Biomni Run ReAct Agent"
+      description: "Run ReAct agent; set prompt/payload/attachments_path/llm_model via job parameters or widgets."
+      tasks:
+        - task_key: run_react_agent
+          existing_cluster_id: "0305-125049-rhn7bq9e"
+          notebook_task:
+            notebook_path: ../notebooks/run_react_agent.py
+            base_parameters:
+              prompt: "You are a helpful biologist and expert geneticist"
+              payload: "{}"
+              attachments_path: ""
+              llm_model: "databricks-claude-sonnet-4-5"
+              plan: "false"
+              reflect: "false"
+              data_lake: "true"
+              library_access: "true"
+      max_concurrent_runs: 1
+      timeout_seconds: 3600
+
     biomni_data_ingestion:
       name: "[${bundle.target}] Biomni Data Ingestion"
       description: "Download data lake files from S3 to /Volumes/biomni/agent/raw_files."
